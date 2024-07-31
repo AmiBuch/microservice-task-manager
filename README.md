@@ -18,7 +18,7 @@ This project is a microservices-based task management system, demonstrating vari
 - NestJS
 - Docker
 - Kubernetes (planned)
-- ... (add more as you implement)
+
 
 ## Getting Started
 

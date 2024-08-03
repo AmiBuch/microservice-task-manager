@@ -4,6 +4,11 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const fs = require('fs');
 const path = require('path');
+const userRoutes = require('./routes/userService');
+const taskRoutes = require('./routes/taskService');
+const rateLimit = require('express-rate-limit');
+const NodeCache = require('node-cache');
+const cache = new NodeCache({ stdTTL: 100, checkPeriod: 120});
 
 const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a'});
 
@@ -16,17 +21,14 @@ app.use(morgan('combined'));
 app.use(express.json());
 app.use(morgan('combined', { stream: accessLogStream}));
 // Import routes
-const userRoutes = require('./routes/userService');
-const taskRoutes = require('./routes/taskService');
-const rateLimit = require('express-rate-limit');
+
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100
 });
 
-const NodeCache = require('node-cache');
-const cache = new NodeCache({ stdTTL: 100, checkPeriod: 120});
+
 
 
 // Middleware for caching

@@ -57,10 +57,11 @@ Ensure you have the following installed:
 1. **Start all Services:**
 ```bash
     docker-compose up
+    # launches all services listed in docker-compose.yml
 ```
-    This will launch all services defined in the `docker-compose.yml`
+
 2. **Access Services**
-    - API Gatewar : `http://localhost:3000`
+    - API Gateway : `http://localhost:3000`
 
 3. **Shut down the services**
 ```bash

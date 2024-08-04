@@ -1,4 +1,9 @@
 const express = require('express');
+const { createProxyMiddleware } = require('http-proxy-middleware');
+const { getServiceUrl } = require('./serviceRegistery');
+const createCircuitBreaker = require('./circuitBreaker');
+const errorHandler = require('./errorHandler');
+const validationMiddleware = require('./validation');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
@@ -19,7 +24,19 @@ app.use(cors());
 app.use(helmet());
 app.use(morgan('combined'));
 app.use(express.json());
+app.use(validationMiddleware);
+
 app.use(morgan('combined', { stream: accessLogStream}));
+app.use('/api/:service', (req, res, next) => {
+  const serviceUrl = getServiceUrl(req.params.service);
+  if (serviceUrl) {
+    const breaker = createCircuitBreaker(createProxyMiddleware({ target: serviceUrl, changeOrigin: true }));
+    breaker.fire(req, res, next).catch(next);
+  } else {
+    next(new Error('Service not found'));
+  }
+});
+app.use(errorHandler);
 // Import routes
 
 
